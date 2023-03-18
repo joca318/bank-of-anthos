@@ -104,6 +104,7 @@ public final class Transaction {
     /**
      * String representation.
      *
+     * 
      * Formatting = "{accountNum}:{type}:{amount}"
      */
     public String toString() {

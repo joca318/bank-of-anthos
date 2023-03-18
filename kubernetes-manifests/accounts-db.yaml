@@ -12,74 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START gke_boa_kubernetes_manifests_accounts_db_statefulset_accounts_db]
-kind: StatefulSet
-apiVersion: apps/v1
-metadata:
-  name: accounts-db
-  labels:
-    app: accounts-db
-    tier: db
-spec:
-  serviceName: "accounts-db"
-  replicas: 1
-  selector:
-    matchLabels:
-      app: accounts-db
-      tier: db
-  template:
-    metadata:
-      labels:
-        app: accounts-db
-        tier: db
-    spec:
-      serviceAccountName: default
-      containers:
-      - name: accounts-db
-        image: gcr.io/bank-of-anthos-ci/accounts-db:v0.5.10
-        envFrom:
-          - configMapRef:
-              name: environment-config
-          - configMapRef:
-              name: accounts-db-config
-          - configMapRef:
-              name: demo-data-config
-        ports:
-          - containerPort: 5432
-            name: postgredb
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 250m
-            memory: 512Mi
-        volumeMounts:
-        - name: postgresdb
-          mountPath: /var/lib/postgresql/data
-          subPath: postgres
-      volumes:
-      - name: postgresdb
-        emptyDir: {}
-# [END gke_boa_kubernetes_manifests_accounts_db_statefulset_accounts_db]
 ---
 # [START gke_boa_kubernetes_manifests_accounts_db_service_accounts_db]
 apiVersion: v1
 kind: Service
 metadata:
   name: accounts-db
-  labels:
-    app: accounts-db
-    tier: db
+#  labels:
+#    app: accounts-db
+#    tier: db
 spec:
   ports:
     - port: 5432
       name: tcp
       targetPort: 5432
       protocol: TCP
-  selector:
-    app: accounts-db
-    tier: db
+  externalIPs:
+    - 10.20.2.11
+#  selector:
+#    app: accounts-db
+#    tier: db
 # [END gke_boa_kubernetes_manifests_accounts_db_service_accounts_db]
 ---
 # [START gke_boa_kubernetes_manifests_accounts_db_configmap_accounts_db_config]
@@ -91,7 +43,9 @@ metadata:
     app: accounts-db
 data:
   POSTGRES_DB: accounts-db
-  POSTGRES_USER: accounts-admin
-  POSTGRES_PASSWORD: accounts-pwd
-  ACCOUNTS_DB_URI: postgresql://accounts-admin:accounts-pwd@accounts-db:5432/accounts-db
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: aloy#2018
+  #ACCOUNTS_DB_URI: postgresql://postgres:aloy#2018@10.20.2.11:5432/accounts-db
+  ACCOUNTS_DB_URI: "postgresql://admin:admin@localhost:5432/accounts-db"
+  #ACCOUNTS_DB_URI: "postgresql+psycopg2://localhost:5432/accounts-db"
 # [END gke_boa_kubernetes_manifests_accounts_db_configmap_accounts_db_config]

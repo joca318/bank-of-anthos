@@ -28,21 +28,19 @@ spec:
     spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
-      securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
       containers:
+      - name: pgadapter
+        image: gcr.io/cloud-spanner-pg-adapter/pgadapter:latest
+        command: ["/opt/java/openjdk/bin/java"]
+        args: ["-jar", "/home/pgadapter/pgadapter.jar", "-p", "svc-project-gke01", "-i", "spanner01", "-d", "postgresdb", "-c", "/var/secrets/google/key.json"]
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
       - name: transactionhistory
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - all
-          privileged: false
-          readOnlyRootFilesystem: true
-        image: gcr.io/bank-of-anthos-ci/transactionhistory:v0.5.10
+        image: gcr.io/bank-of-anthos-ci/transactionhistory:v0.5.11 
         volumeMounts:
         - name: publickey
           mountPath: "/tmp/.ssh"
@@ -55,9 +53,9 @@ spec:
         - name: PORT
           value: "8080"
         - name: ENABLE_TRACING
-          value: "true"
+          value: "false"
         - name: ENABLE_METRICS
-          value: "true"
+          value: "false"
         - name: POLL_MS
           value: "100"
         - name: CACHE_SIZE
@@ -74,7 +72,7 @@ spec:
         # Valid levels are debug, info, warn, error, fatal.
         # If no valid level is set, will default to info.
         - name: LOG_LEVEL
-          value: "info"
+          value: "debug"
         - name: NAMESPACE
           valueFrom:
             fieldRef:
@@ -113,6 +111,9 @@ spec:
           failureThreshold: 30
           periodSeconds: 10
       volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: spanner-key
       - name: publickey
         secret:
           secretName: jwt-key

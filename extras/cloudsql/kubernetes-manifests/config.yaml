@@ -56,7 +56,7 @@ metadata:
     app: accounts-db
 data:
   # Updated to use CloudSQL Proxy
-  ACCOUNTS_DB_URI: postgresql://admin:admin@127.0.0.1:5432/accounts-db
+  ACCOUNTS_DB_URI: postgresql://postgres:aloy#2018@10.20.2.8:5432/accounts-db
 # [END gke_kubernetes_manifests_config_configmap_accounts_db_config]
 ---
 # [START gke_kubernetes_manifests_config_configmap_ledger_db_config]
@@ -68,10 +68,10 @@ metadata:
     app: postgres
 data:
   POSTGRES_DB: postgresdb
-  POSTGRES_USER: admin
-  POSTGRES_PASSWORD: admin
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: aloy#2018
   # Updated to use CloudSQL Proxy
-  SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/ledger-db
-  SPRING_DATASOURCE_USERNAME: admin # should match POSTGRES_USER
-  SPRING_DATASOURCE_PASSWORD: admin # should match POSTGRES_PASSWORD
+  SPRING_DATASOURCE_URL: jdbc:postgresql://10.20.2.8:5432/ledger-db
+  SPRING_DATASOURCE_USERNAME: postgres # should match POSTGRES_USER
+  SPRING_DATASOURCE_PASSWORD: aloy#2018 # should match POSTGRES_PASSWORD
 # [END gke_kubernetes_manifests_config_configmap_ledger_db_config]

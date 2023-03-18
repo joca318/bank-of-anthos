@@ -34,6 +34,16 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
+      - name: pgadapter
+        image: gcr.io/cloud-spanner-pg-adapter/pgadapter:latest
+        command: ["/opt/java/openjdk/bin/java"]
+        args: ["-jar", "/home/pgadapter/pgadapter.jar", "-p", "svc-project-gke01", "-i", "spanner01", "-d", "accounts-db", "-c", "/var/secrets/google/key.json"]
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
       - name: contacts
         securityContext:
           allowPrivilegeEscalation: false
@@ -80,6 +90,9 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 10
       volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: spanner-key
       - name: publickey
         secret:
           secretName: jwt-key

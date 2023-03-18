@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata: # kpt-merge: /allow-egress-alloydb-data
+  name: allow-egress-accounts-db-spanner
+spec:
+  hosts:
+  - "localhost"
+  addresses:
+  - 127.0.0.1 # alloydb data server
+  ports:
+  - number: 5432
+    name: postgres
+    protocol: TCP

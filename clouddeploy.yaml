@@ -1,0 +1,39 @@
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: DeliveryPipeline
+metadata:
+ name: bank-of-anthos-demo-app01
+description: main application pipeline - go transacting 
+serialPipeline:
+ stages:
+ - targetId: dev
+   profiles: []
+ - targetId: prod-us-east1
+   profiles: []
+---
+
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: Target
+metadata:
+ name: dev
+description: development cluster [ASM01]
+anthosCluster:
+  membership: projects/svc-project-gke01/locations/global/memberships/k8s01
+#gke:
+#  cluster: projects/svc-project-gke01/locations/us-central1-c/clusters/k8s01
+executionConfigs:
+- usages:
+  - RENDER
+  - DEPLOY
+#  workerPool: "projects/svc-project-gke01/locations/us-central1/workerPools/pp01" 
+---
+
+apiVersion: deploy.cloud.google.com/v1beta1
+kind: Target
+metadata:
+ name: prod-us-east1
+description: production cluster [ASM02]
+requireApproval: true
+anthosCluster:
+  membership: projects/svc-project-gke01/locations/global/memberships/k8s02
+#gke:
+#  cluster: projects/svc-project-gke02/locations/us-east1-c/clusters/k8s02

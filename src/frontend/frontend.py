@@ -559,7 +559,7 @@ def create_app():
 
     # Set up tracing and export spans to Cloud Trace.
     if os.environ['ENABLE_TRACING'] == "true":
-        app.logger.info("✅ Tracing enabled.")
+        app.logger.info("✅ Tracing enabled")
         trace.set_tracer_provider(TracerProvider())
         cloud_trace_exporter = CloudTraceSpanExporter()
         trace.get_tracer_provider().add_span_processor(
